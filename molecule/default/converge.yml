@@ -2,8 +2,6 @@
 - name: Converge
   hosts: all
   become: true
-  collections:
-    - community.mysql
   roles:
     - role: systemli.mariadb
     - role: ansible-role-nextcloud
