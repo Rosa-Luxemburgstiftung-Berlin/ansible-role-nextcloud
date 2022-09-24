@@ -1,11 +1,29 @@
 ---
 driver:
-  name: vagrant
-  provider:
-    name: virtualbox
+  name: docker
 platforms:
-  - name: nextcloud-bullseye64
-    box: debian/bullseye64
+  - name: instance
+    image: debian:bullseye
+    dockerfile: Dockerfile.j2
+    privileged: true
+    #command: /lib/systemd/systemd
+    override_command: false
+    #volumes:
+    #  - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    capabilities:
+      - SYS_ADMIN
+    security_opts:
+      - seccomp=unconfined
+    # cgroup-parent: docker.slice
+    # cgroupns: private
+
+provisioner:
+  name: ansible
+
 lint: |
   set -e
   yamllint .
