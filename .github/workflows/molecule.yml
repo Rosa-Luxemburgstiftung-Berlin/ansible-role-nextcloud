@@ -7,7 +7,8 @@ on:
   schedule:
     - cron: "10 6 * * 1"
 jobs:
-  ansible6:
+  ansible-latest:
+    name: latest ansible version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,7 +19,26 @@ jobs:
           python-version: 3.9
 
       - name: Install test dependencies.
-        run: pip3 install "ansible==6.2.0" "ansible-core==2.13.2" "molecule[docker,lint]" yamllint ansible-lint requests jmespath
+        run: pip3 install ansible "molecule[docker,lint]" yamllint ansible-lint requests jmespath
+
+      - name: run molecule tests
+        run: molecule test
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+  ansible-pinned:
+    name: pinned ansible version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install test dependencies.
+        run: pip3 install "ansible==6.2.0" "ansible-core==2.13.2" "molecule[docker,lint]" "yamllint==1.26.0" "ansible-lint==6.4.0" requests jmespath
 
       - name: run molecule tests
         run: molecule test
@@ -26,6 +46,7 @@ jobs:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
   ansible-legacy:
+    name: legacy ansible version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -38,7 +59,7 @@ jobs:
       - name: Install test dependencies.
         run: |
           pip3 uninstall ansible ansible-lint ansible-core ansible-compat
-          pip3 install "ansible==2.9.27" "molecule[docker,lint]==3.1.5" yamllint "ansible-lint==4.2.0" requests jmespath
+          pip3 install "ansible==2.9.27" "molecule[docker,lint]==3.2.3" "yamllint==1.24.2" "ansible-lint==4.2.0" requests jmespath
           ansible-galaxy collection install community.mysql
 
       - name: run molecule tests
