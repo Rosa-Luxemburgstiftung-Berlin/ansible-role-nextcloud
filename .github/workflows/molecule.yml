@@ -57,10 +57,10 @@ jobs:
           python-version: 3.9
 
       - name: Install test dependencies.
-        run: |
-          pip3 uninstall ansible ansible-lint ansible-core ansible-compat
-          pip3 install "ansible==2.9.27" "molecule[docker,lint]==3.2.3" "yamllint==1.24.2" "ansible-lint==4.2.0" requests jmespath
-          ansible-galaxy collection install community.mysql
+        run: pip3 install "ansible==2.9.27" "molecule[docker,lint]==3.2.3" "yamllint==1.24.2" "ansible-lint==4.2.0" requests jmespath
+
+      - name: Install collections required for ansible legacy versions
+        run: ansible-galaxy collection install community.mysql
 
       - name: run molecule tests
         run: molecule test
